@@ -1,0 +1,5 @@
+TapeR - TODO:
+
+* add padded knots-vector into return object of TapeR_FIT_LME.f()
+* with that, using a Rcpp-function to calculate diameter is possible 
+* export data so that it is available without actually loading the package
