@@ -66,9 +66,11 @@ List of model properties
   functions in this package.}
 Components of the \code{par.lme} list
 \item{knt_x}{Relative positions of the fixed effects Spline knots along the stem.}
+\item{pad_knt_x}{Padded version of knt_x, as used to define B-Spline design matrix.}
 \item{ord_x}{Order of the spline.}
 \item{knt_z}{Relative positions of the random effects Spline knots along
   the stem.}
+\item{pad_knt_z}{Padded version of knt_z, as used to define B-Spline design matrix.}
 \item{ord_z}{Order of the spline.}
 \item{b_fix}{Fixed-effects spline coefficients.}
 \item{KOVb_fix}{Covariance of fixed-effects.}

@@ -40,10 +40,12 @@ function(Id,x,y,knt_x,ord_x,knt_z,ord_z,IdKOVb = "pdSymm", ...){
 
 		sig2_eps 	= as.numeric(exp(theta["lSigma"])^2)
 
-		par.lme     = list(	knt_x = knt_x, ord_x = ord_x, knt_z = knt_z, ord_z = ord_z,
-							b_fix = b_fix, KOVb_fix = KOVb_fix,
-							sig2_eps = sig2_eps, dfRes = anova(fit.lme)$denDF,
-							KOVb_rnd = KOVb_rnd, theta = theta, KOV_theta = KOV_theta)
+		par.lme     = list(	knt_x = knt_x, pad_knt_x = TransKnots(knots=knt_x, ord=ord_x),
+		                    knt_z = knt_z, pad_knt_z = TransKnots(knots=knt_z, ord=ord_z), 
+		                    ord_x = ord_x, ord_z = ord_z,
+		                    b_fix = b_fix, KOVb_fix = KOVb_fix,
+		                    sig2_eps = sig2_eps, dfRes = anova(fit.lme)$denDF,
+		                    KOVb_rnd = KOVb_rnd, theta = theta, KOV_theta = KOV_theta)
 
 #       --------------------------------------------------------------------------------------------
 		return(list(fit.lme = fit.lme,par.lme = par.lme))
