@@ -3,3 +3,12 @@ TapeR - TODO:
 * add padded knots-vector into return object of TapeR_FIT_LME.f()
 * with that, using a Rcpp-function to calculate diameter is possible 
 * export data so that it is available without actually loading the package
+* update documentation
+* interpolation of taper curve
+* use c-function for diameter prediction
+* tests einbauen
+* regelmäßige Anfragen von TapeR-Mutzer (2-3/a), z.B. Astmasse in Schaftkurve 
+* Fehlermeldungen tw. unklar, z.B. bei nicht-Konvergenz, 
+  evtl. Option in Meldung erläutern
+* NA abfangen
+* unsaubere Daten - vorab testen?
