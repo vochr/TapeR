@@ -13,3 +13,6 @@ Description: Implementation of functions for fitting taper curves (a semiparamet
 License: GPL (>= 2)
 LazyLoad: yes
 Depends: nlme, splines, pracma
+Suggests: 
+    testthat
+RoxygenNote: 7.1.1
