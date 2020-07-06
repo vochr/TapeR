@@ -1,0 +1,16 @@
+TapeR - TODO:
+
+* add padded knots-vector into return object of TapeR_FIT_LME.f()
+* with that, it's easier using a Rcpp-function to calculate diameter 
+* eventually add BSpline-Matrix for calibration data into return object, so 
+  that it is not necessary to be re-evaluated each time (well depends on size!)
+* export data so that it is available without actually loading the package
+* update documentation
+* interpolation of taper curve
+* eventually use c-function for diameter prediction
+* included tests
+* regelmäßige Anfragen von TapeR-Nutzer (2-3/a), z.B. Astmasse in Schaftkurve 
+* Fehlermeldungen tw. unklar, z.B. bei nicht-Konvergenz, 
+  evtl. Option in Meldung erläutern
+* unsaubere Daten für Modellanpassung - vorab testen?
+** NA abfangen
