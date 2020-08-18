@@ -1,3 +1,16 @@
+#' @title percentile for estimated taper curve diameter
+#' @description Internal funtions not usually called by users.
+#' @param Ht tree height
+#' @param Hx Numeric vector of stem heights (m) along which to return the expected diameter.
+#' @param qD vector of quantiles, passed to \code{pnorm}
+#' @param Hm measured height of respective diameters \code{Dm}
+#' @param Dm measured diameter
+#' @param par.lme List of taper model parameters obtained by \code{\link{TapeR_FIT_LME.f}}.
+#' @param ... 
+#' @return percentile for estimated taper curve diameter at position \code{Hx}
+#' given \code{Ht}, \code{Hm} and \code{Dm}
+#'
+#' @examples
 CdN_DHxHt.f <-
 function(Ht, Hx, qD, Hm, Dm, par.lme, ...){#Prb N[D(Hx|N(mw(Ht),sd(Ht))<= qD| Ht/Hm,Dm]
 #   ------------------------------------------------------------------------------------------------
