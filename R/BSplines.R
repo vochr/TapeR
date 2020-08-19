@@ -1,7 +1,7 @@
 #' @title builds B-Splines Matrix with appropriate knots for taper fitting
 #' @description Internal function not usually called by users
-#' @param knots knot positions for B-Splines
-#' @param ord order of B-Splines
+#' @param knots knot positions for spline function
+#' @param ord order of the spline function
 #' @param der derivatives
 #' @param x height measurements
 #' @param ... 
