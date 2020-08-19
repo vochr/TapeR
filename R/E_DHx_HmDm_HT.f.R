@@ -1,3 +1,77 @@
+#' @title Estimate diameter and approximate confidence and prediction intervals
+#' @description Calibrates a taper curve based on at least one diameter 
+#' measurement and returns the expected diameters and approximate variances
+#' @param Hx Numeric vector of stem heights (m) along which to return the 
+#' expected diameter.
+#' @param Hm Numeric vector of stem heights (m) along which diameter 
+#' measurements were taken for calibration. Can be of length 1. Must be of same 
+#' length as \code{Dm}.
+#' @param Dm Numeric vector of diameter measurements (cm) taken for calibration.
+#' Can be of length 1. Must be of same length as \code{Hm}.
+#' @param mHt Scalar. Tree height (m).
+#' @param sHt Scalar. Standard deviation of stem height. Can be 0 if height was 
+#' measured without error.
+#' @param par.lme List of taper model parameters obtained by 
+#' \code{\link{TapeR_FIT_LME.f}}.
+#' @param ... not currently used
+#' @details calibrates the tree specific taper curve and calculates approximate
+#' confidence intervals, which can be useful for plotting. Uncertainty resulting
+#' from tariff height estimates if tree height was not measured is incorporated.
+#' @return a list holding six elements:
+#' \itemize{
+#'  \item{DHx: }{Numeric vector of diameters (cm) (expected value) along the 
+#'  heights given by \code{Hx}.}
+#'  \item{Hx: }{Numeric vector of heights (m) along which to return the expected
+#'   diameter.}
+#'  \item{MSE_Mean: }{Mean squared error for the expected value of the diameter.}
+#'  \item{CI_Mean: }{Confidence interval. Matrix of the 95\% conf. int. for the 
+#'  expected value of the diameter (cm). First column: lower limit, second 
+#'  column: mean, third column: upper limit.}
+#'  \item{MSE_Pred: }{Mean squared error for the prediction of the diameter.}
+#'  \item{CI_Mean: }{Prediction interval. Matrix of the 95\% conf. int. for the 
+#'  prediction of the diameter (cm). First column: lower limit, second column: 
+#'  mean, third column: upper limit.}
+#' }
+#' @author Edgar Kublin
+#' @references Kublin, E., Breidenbach, J., Kaendler, G. (2013) A flexible stem 
+#' taper and volume prediction method based on mixed-effects B-spline 
+#' regression, Eur J For Res, 132:983-997.
+#' @seealso \code{\link{TapeR_FIT_LME.f}}
+#' @export
+#'
+#' @examples
+#' #example data
+#' data(DxHx.df)
+#' taper curve parameters based on all measured trees
+#' data(SK.par.lme)
+#' 
+#' #select data of first tree
+#' Idi <- (DxHx.df[,"Id"] == unique(DxHx.df$Id)[1])
+#' (tree1 <- DxHx.df[Idi,])
+#' 
+#' ## Predict the taper curve based on the diameter measurement in 2 m
+#' ## height and known height 
+#' tc.tree1 <- E_DHx_HmDm_HT.f(Hx=1:tree1$Ht[1], 
+#'                             Hm=tree1$Hx[3],
+#'                             Dm=tree1$Dx[3], 
+#'                             mHt = tree1$Ht[1], 
+#'                             sHt = 0, 
+#'                             par.lme = SK.par.lme)
+#' #plot the predicted taper curve
+#' plot(tc.tree1$Hx, tc.tree1$DHx, type="l", las=1)
+#' #lower CI
+#' lines(tc.tree1$Hx, tc.tree1$CI_Mean[,1], lty=2)
+#' #upper CI
+#' lines(tc.tree1$Hx, tc.tree1$CI_Mean[,3], lty=2)
+#' #lower prediction interval
+#' lines(tc.tree1$Hx, tc.tree1$CI_Pred[,1], lty=3)
+#' #upper prediction interval
+#' lines(tc.tree1$Hx, tc.tree1$CI_Pred[,3], lty=3)
+#' #add measured diameter used for calibration
+#' points(tree1$Hx[3], tree1$Dx[3], pch=3, col=2)
+#' #add the observations
+#' points(tree1$Hx, tree1$Dx)
+
 E_DHx_HmDm_HT.f <-
 function( Hx, Hm, Dm, mHt, sHt = 0, par.lme, ...){
 #   ************************************************************************************************

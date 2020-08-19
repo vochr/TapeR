@@ -1,3 +1,85 @@
+#' @title Estimate diameter and exact confidence and prediction intervals
+#' @description Calibrates a taper curve based on at least one diameter 
+#' measurement and returns the expected diameters and exact variances
+#' @param Hx Numeric vector of stem heights (m) along which to return the 
+#' expected diameter.
+#' @param Hm Numeric vector of stem heights (m) along which diameter 
+#' measurements were taken for calibration. Can be of length 1. Must be of same 
+#' length as \code{Dm}.
+#' @param Dm Numeric vector of diameter measurements (cm) taken for calibration.
+#' Can be of length 1. Must be of same length as \code{Hm}.
+#' @param mHt Scalar. Tree height (m).
+#' @param sHt Scalar. Standard deviation of stem height. Can be 0 if height was 
+#' measured without error.
+#' @param par.lme List of taper model parameters obtained by 
+#' \code{\link{TapeR_FIT_LME.f}}.
+#' @param ... not currently used
+#' @details calibrates the tree specific taper curve and calculates 'exact'
+#' confidence intervals, which can be useful for plotting. 
+#' Attention: this function is somewhat time-consuming.
+#' @return a list holding six elements:
+#' \itemize{
+#'  \item{Hx: }{Numeric vector of heights (m) along which to return the expected 
+#'  diameter.} 
+#'  \item{q_DHx_u: }{Lower confidence interval (cm). (95\% CI except for estimates
+#'  close to the stem tip.)}
+#'  \item{DHx: }{Diameter estimate (cm).}
+#'  \item{q_DHx_o: }{Upper CI (cm).}
+#'  \item{cP_DHx_u: }{Probability of observations <\code{q_DHx_u}.}
+#'  \item{cP_DHx_o: }{Probability of observations <\code{q_DHx_o}.}
+#' }
+#' @author Edgar Kublin
+#' @references Kublin, E., Breidenbach, J., Kaendler, G. (2013) A flexible stem 
+#' taper and volume prediction method based on mixed-effects B-spline 
+#' regression, Eur J For Res, 132:983-997.
+#' @seealso \code{\link{TapeR_FIT_LME.f}}
+#' @export
+#'
+#' @examples
+#' #example data
+#' data(DxHx.df)
+#' taper curve parameters based on all measured trees
+#' data(SK.par.lme)
+#' 
+#' #select data of first tree
+#' Idi <- (DxHx.df[,"Id"] == unique(DxHx.df$Id)[1])
+#' (tree1 <- DxHx.df[Idi,])
+#' 
+#' ## Predict the taper curve based on the diameter measurement in 2 m
+#' ## height and known height 
+#' tc.tree1 <- E_DHx_HmDm_HT.f(Hx=1:tree1$Ht[1], 
+#'                             Hm=tree1$Hx[3],
+#'                             Dm=tree1$Dx[3], 
+#'                             mHt = tree1$Ht[1], 
+#'                             sHt = 0, 
+#'                             par.lme = SK.par.lme)
+#' #plot the predicted taper curve
+#' plot(tc.tree1$Hx, tc.tree1$DHx, type="l", las=1)
+#' #lower CI
+#' lines(tc.tree1$Hx, tc.tree1$CI_Mean[,1], lty=2)
+#' #upper CI
+#' lines(tc.tree1$Hx, tc.tree1$CI_Mean[,3], lty=2)
+#' #lower prediction interval
+#' lines(tc.tree1$Hx, tc.tree1$CI_Pred[,1], lty=3)
+#' #upper prediction interval
+#' lines(tc.tree1$Hx, tc.tree1$CI_Pred[,3], lty=3)
+#' #add measured diameter used for calibration
+#' points(tree1$Hx[3], tree1$Dx[3], pch=3, col=2)
+#' #add the observations
+#' points(tree1$Hx, tree1$Dx)
+#' ## Calculate "exact" CIs. Careful: This takes a while!
+#' #library(pracma)# for numerical integration with gaussLegendre()
+#' tc.tree1.exact <- E_DHx_HmDm_HT_CIdHt.f(Hx=1:tree1$Ht[1],
+#'                                         Hm=tree1$Hx[3], 
+#'                                         Dm=tree1$Dx[3], 
+#'                                         mHt=tree1$Ht[1], 
+#'                                         sHt=1, 
+#'                                         par.lme=SK.par.lme) 
+#' #add exact confidence intervals to approximate intervals above - fits
+#' #quite well
+#' lines(tc.tree1.exact[,1], tc.tree1.exact[,2], lty=2,col=2)
+#' lines(tc.tree1.exact[,1], tc.tree1.exact[,4], lty=2,col=2)
+
 E_DHx_HmDm_HT_CIdHt.f <-
 function(Hx, Hm, Dm, mHt, sHt, par.lme, ...){
 #   ************************************************************************************************
