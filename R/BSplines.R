@@ -4,9 +4,11 @@
 #' @param ord order of the spline function
 #' @param der derivatives
 #' @param x height measurements
-#' @param ... 
+#' @param ... not currently used
 #' @details internally \code{\link[splines]{splineDesign}} is called
-#' @return
+#' @return B-Splines matrix build using \code{\link[splines]{splineDesing}}
+#' @author Edgar Kublin
+#' @usage BSplines(knots = c(seq(0, 1, 0.1)), ord = 4, der = 0, x = c(seq(0, 1, 0.01)), ...)
 
 BSplines <-
 function(knots=c(seq(0,1,0.1)), ord = 4, der = 0, x = c(seq(0,1,0.01)), ...){

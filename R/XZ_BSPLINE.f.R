@@ -6,6 +6,7 @@
 #'
 #' @return List with height measurements (\code{x}), the fixed effects B-splines
 #' matrix and the random effects B-splines matrix.
+#' @author Edgar Kublin
 
 XZ_BSPLINE.f <-
 function(x, par.lme, ...){

@@ -8,6 +8,7 @@
 #'
 #' @return estimated diameter based on natural interpolating spline 
 #' (\code{\link[stats]{spline}})
+#' @author Edgar Kublin
 
 yx_isp.f <-
 function(x, x.grd, y.grd, ...){

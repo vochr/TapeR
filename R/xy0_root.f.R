@@ -11,6 +11,7 @@
 #'
 #' @return difference between actual diameter at height \code{x} and given
 #' diameter \code{y0}
+#' @author Edgar Kublin
 
 xy0_root.f <-
 function (x, y0, SK, par.lme, ...){

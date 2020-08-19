@@ -17,6 +17,7 @@
 #' @param ... not currently used
 #'
 #' @return \code{qD} for given \code{alpha} with respect to \code{Int_CdN_DHx_dHt.f}
+#' @author Edgar Kublin
 
 qD.rout.f <-
 function(qD, alpha = 0.975, Hx, Hm, Dm, mHt, sHt, par.lme, nGL = 51, ...){

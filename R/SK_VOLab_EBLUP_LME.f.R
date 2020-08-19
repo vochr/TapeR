@@ -18,6 +18,7 @@
 #' @param ... not currently used
 #'
 #' @return List with two elements, the estimated volume and its variance 
+#' @author Edgar Kublin
 
 SK_VOLab_EBLUP_LME.f <-
 function(xm, ym, a=0, b=1, Ht, par.lme, IntPolOpt = T, ...){

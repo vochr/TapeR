@@ -24,6 +24,8 @@
 #'
 #' @return list with expected volume, variance of volume and squared expected value
 #' incorporating the uncertainty of height measurement
+#' @author Edgar Kublin
+#' @author Edgar Kublin
 
 Int_E_VOL_AB_HmDm_HT_dHt.f <-
 function(Hm, Dm, A = NULL, B = NULL, iDH = "D", mw_HtT, sd_HtT, par.lme, IA = F, nGL = 51, ...){

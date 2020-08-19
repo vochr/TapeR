@@ -9,7 +9,7 @@
 #' on off-diagonal elements? Defaults to FALSE. See details.
 #' @details This function is the actual working horse for prediction using the
 #' fitted taper model. Based on the model \code{par.lme} and the measured
-#' diameters \code{ym} and corresponding (relative) heights \code(xm) of a 
+#' diameters \code{ym} and corresponding (relative) heights \code{xm} of a 
 #' specific tree (there might be just one measurement), the random
 #' effect parameters and subsequently diameters are estimated. Depending on the
 #' boolean parameter \code{R0}, the calibrated taper curve is forced through the
@@ -28,6 +28,7 @@
 #'   \item MSE_Pred mean squared error of prediction
 #'   \item CI_Pred mean and limits of prediction interval
 #' }
+#' @author Edgar Kublin
 #' @seealso \code{\link{E_DHx_HmDm_HT.f}}, \code{\link{E_VOL_AB_HmDm_HT.f}}
 #' @examples
 #' data("SK.par.lme")
@@ -38,8 +39,6 @@
 #' TapeR:::SK_EBLUP_LME.f(1.3/27, 30, 1.3/27, SK.par.lme, R0=TRUE)$yp
 #' TapeR:::SK_EBLUP_LME.f(1.3/27, 30, c(1.3, 5)/27, SK.par.lme)
 #' @export
-#' 
-
 
 SK_EBLUP_LME.f <-
 function(xm, ym, xp, par.lme, R0=FALSE, ...){

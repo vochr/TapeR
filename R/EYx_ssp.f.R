@@ -7,6 +7,7 @@
 #'
 #' @return expected diameter given knots and coefficients at position (height)
 #' \code{x}.
+#' @author Edgar Kublin
 
 EYx_ssp.f <-
 function(knt,coe,x, ...){

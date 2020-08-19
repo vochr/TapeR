@@ -17,6 +17,7 @@
 #' \code{\link{E_HDx_HmDm_HT.f}}
 #' @return deviation between observed diameter \code{Dx} and diameter in height
 #' \code{Hx}.
+#' @author Edgar Kublin
 
 Hx_root.f <-
 function(Hx,Dx,Hm,Dm,mHt,sHt,par.lme, ...){

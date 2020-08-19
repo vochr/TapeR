@@ -8,6 +8,7 @@
 #' @details function used to transform given diameter in volume calculation into
 #' height; c.f \code{\link{E_VOL_AB_HmDm_HT.f}}
 #' @return relative height of given diameter \code{y0}
+#' @author Edgar Kublin
 
 xy0_SK_EBLUP_LME.f <-
 function(xm, ym, y0, par.lme, ...){

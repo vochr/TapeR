@@ -9,8 +9,8 @@
 #' @param ... 
 #' @return percentile for estimated taper curve diameter at position \code{Hx}
 #' given \code{Ht}, \code{Hm} and \code{Dm}
-#'
-#' @examples
+#' @author Edgar Kublin
+
 CdN_DHxHt.f <-
 function(Ht, Hx, qD, Hm, Dm, par.lme, ...){#Prb N[D(Hx|N(mw(Ht),sd(Ht))<= qD| Ht/Hm,Dm]
 #   ------------------------------------------------------------------------------------------------

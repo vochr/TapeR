@@ -8,6 +8,7 @@
 #'
 #' @return estimated diameter based on smoothing splines 
 #' (\code{\link[stats]{smooth.spline}})
+#' @author Edgar Kublin
 
 yx_ssp.f <-
 function(x, x.grd, y.grd, ...){
