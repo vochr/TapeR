@@ -7,7 +7,7 @@
 #' @param ... not currently used
 #'
 #' @return estimated diameter based on natural interpolating spline 
-#' (\code{\link[stats]{spline}})
+#' (\code{\link[stats]{splinefun}})
 #' @author Edgar Kublin
 
 yx_isp.f <-

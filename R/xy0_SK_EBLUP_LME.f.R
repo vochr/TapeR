@@ -3,7 +3,7 @@
 #' @param xm relative heights for which measurements are available
 #' @param ym corresponding diameter measurements in height \code{xm}
 #' @param y0 given diameter for which height is required
-#' @param par.lme Fitted model object, return of \code{\link{TapeR_FIT_LME.f }}
+#' @param par.lme Fitted model object, return of \code{\link{TapeR_FIT_LME.f}}
 #' @param ... not currently used
 #' @details function used to transform given diameter in volume calculation into
 #' height; c.f \code{\link{E_VOL_AB_HmDm_HT.f}}

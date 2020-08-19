@@ -13,7 +13,7 @@
 #' @param Ht tree height
 #' @param par.lme List of taper model parameters obtained by \code{\link{TapeR_FIT_LME.f}} 
 #' @param IntPolOpt option for method of interpolation, if TRUE using a natural 
-#' interpolating spline (\code{\link[stats]{spline}}), if FALSE using a smoothing 
+#' interpolating spline (\code{\link[stats]{splinefun}}), if FALSE using a smoothing 
 #' spline (\code{\link[stats]{smooth.spline}}); defaults to TRUE
 #' @param ... not currently used
 #'

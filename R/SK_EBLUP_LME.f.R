@@ -4,7 +4,7 @@
 #' @param xm relative heights for which measurements are available
 #' @param ym corresponding diameter measurements in height \code{xm}
 #' @param xp relative heights for which predictions are required
-#' @param par.lme Fitted model object, return of \code{\link{TapeR_FIT_LME.f }}
+#' @param par.lme Fitted model object, return of \code{\link{TapeR_FIT_LME.f}}
 #' @param R0 boolean, should residual variance-covariance matrix be set to zero
 #' on off-diagonal elements? Defaults to FALSE. See details.
 #' @details This function is the actual working horse for prediction using the

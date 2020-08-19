@@ -1,7 +1,7 @@
 #' @title construct B-Splines design matrices
 #' @description Internal function not usually called by users
 #' @param x relative height measurements
-#' @param par.lme Fitted model object, return of \code{\link{TapeR_FIT_LME.f }}
+#' @param par.lme Fitted model object, return of \code{\link{TapeR_FIT_LME.f}}
 #' @param ... not currently used
 #'
 #' @return List with height measurements (\code{x}), the fixed effects B-splines

@@ -6,7 +6,7 @@
 #' @param x height measurements
 #' @param ... not currently used
 #' @details internally \code{\link[splines]{splineDesign}} is called
-#' @return B-Splines matrix build using \code{\link[splines]{splineDesing}}
+#' @return B-Splines matrix build using \code{\link[splines]{splineDesign}}
 #' @author Edgar Kublin
 #' @usage BSplines(knots = c(seq(0, 1, 0.1)), ord = 4, der = 0, x = c(seq(0, 1, 0.01)), ...)
 
