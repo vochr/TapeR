@@ -1,5 +1,5 @@
 #' @title Int_E_VOL_AB_HmDm_HT_dHt.f
-#'
+#' @description Internal function not usually called by users
 #' @param Hm Numeric vector of stem heights (m) along which diameter measurements 
 #' were taken for calibration. Can be of length 1. Must be of same length as \code{Dm}
 #' @param Dm Numeric vector of diameter measurements (cm) taken for calibration.
