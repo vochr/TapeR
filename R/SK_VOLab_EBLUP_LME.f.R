@@ -1,3 +1,24 @@
+#' @title taper volume estimation
+#' @description Internal function not usually called by users
+#' @param xm relative heights for which measurements are available
+#' @param ym corresponding diameter measurements in height \code{xm}
+#' @param A Numeric scalar defining the lower threshold of a stem section for volume
+#' estimation. Depends on \code{iDH}. If \code{iDH} = "D", a diameter
+#' (cm), if \code{iDH} = "H", a height (m). If NULL, section starts at lowest point.
+#' @param B Numeric scalar defining the upper threshold of a stem section for volume
+#' estimation. Depends on \code{iDH}. If \code{iDH} = "D", a diameter
+#' (cm), if \code{iDH} = "H", a height (m). If NULL, section ends at tip.
+#' @param a relative height of lower threshold of stem section
+#' @param b relative height of upper threshold of stem section
+#' @param Ht tree height
+#' @param par.lme List of taper model parameters obtained by \code{\link{TapeR_FIT_LME.f}} 
+#' @param IntPolOpt option for method of interpolation, if TRUE using a natural 
+#' interpolating spline (\code{\link[stats]{spline}}), if FALSE using a smoothing 
+#' spline (\code{\link[stats]{smooth.spline}}); defaults to TRUE
+#' @param ... not currently used
+#'
+#' @return List with two elements, the estimated volume and its variance 
+
 SK_VOLab_EBLUP_LME.f <-
 function(xm, ym, a=0, b=1, Ht, par.lme, IntPolOpt = T, ...){
 #   ------------------------------------------------------------------------------------------------
