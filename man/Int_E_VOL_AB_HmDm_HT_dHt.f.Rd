@@ -60,6 +60,4 @@ Internal function not usually called by users
 }
 \author{
 Edgar Kublin
-
-Edgar Kublin
 }

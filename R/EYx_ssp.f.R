@@ -8,6 +8,7 @@
 #' @return expected diameter given knots and coefficients at position (height)
 #' \code{x}.
 #' @author Edgar Kublin
+#' @import splines
 
 EYx_ssp.f <-
 function(knt,coe,x, ...){

@@ -9,6 +9,7 @@
 #' @return B-Splines matrix build using \code{\link[splines]{splineDesign}}
 #' @author Edgar Kublin
 #' @usage BSplines(knots = c(seq(0, 1, 0.1)), ord = 4, der = 0, x = c(seq(0, 1, 0.01)), ...)
+#' @import splines
 
 BSplines <-
 function(knots=c(seq(0,1,0.1)), ord = 4, der = 0, x = c(seq(0,1,0.01)), ...){

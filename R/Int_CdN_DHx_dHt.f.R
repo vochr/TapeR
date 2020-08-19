@@ -16,6 +16,7 @@
 #'
 #' @return Int_CdN_dN
 #' @author Edgar Kublin
+#' @import pracma
 
 Int_CdN_DHx_dHt.f <-
 function(qD, Hx, Hm, Dm, mHt, sHt, par.lme, nGL = 51, ...){

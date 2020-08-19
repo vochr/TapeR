@@ -55,6 +55,7 @@
 #' regression, Eur J For Res, 132:983-997.
 #' @seealso \code{\link{E_DHx_HmDm_HT.f}}, \code{\link{E_DHx_HmDm_HT_CIdHt.f}},
 #' \code{\link{E_HDx_HmDm_HT.f}}, \code{\link{E_VOL_AB_HmDm_HT.f}}
+#' @import nlme
 #' @export
 #'
 #' @examples
