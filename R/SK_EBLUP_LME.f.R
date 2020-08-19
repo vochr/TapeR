@@ -7,7 +7,7 @@
 #' @param par.lme Fitted model object, return of \code{\link{TapeR_FIT_LME.f }}
 #' @param R0 boolean, should residual variance-covariance matrix be set to zero
 #' on off-diagonal elements? Defaults to FALSE. See details.
-#' @details This function is the actual working horse to prediction using the
+#' @details This function is the actual working horse for prediction using the
 #' fitted taper model. Based on the model \code{par.lme} and the measured
 #' diameters \code{ym} and corresponding (relative) heights \code(xm) of a 
 #' specific tree (there might be just one measurement), the random
