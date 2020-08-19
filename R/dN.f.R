@@ -1,5 +1,5 @@
 #' @title evaluate Normal distribution
-#' @description Internal funtions not usually called by users.
+#' @description Internal function not usually called by users
 #' @param x vector of quantiles
 #' @param mw vector of means
 #' @param sd vector of standard deviations

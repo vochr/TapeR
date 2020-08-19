@@ -1,5 +1,5 @@
 #' @title percentile for estimated taper curve diameter
-#' @description Internal funtions not usually called by users.
+#' @description Internal function not usually called by users
 #' @param Ht tree height
 #' @param Hx Numeric vector of stem heights (m) along which to return the expected diameter.
 #' @param qD vector of quantiles, passed to \code{pnorm}
