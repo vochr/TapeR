@@ -1,6 +1,6 @@
 #' @title Int_CdN_DHx_dHt.f
 #' @description Internal function not usually called by users
-#' @param qD vector of quantiles, passed to \code{pnorm}
+#' @param qD vector of quantiles, finally passed to \code{pnorm}
 #' @param Hx Numeric vector of stem heights (m) along which to return the 
 #' expected diameter
 #' @param Hm Numeric vector of stem heights (m) along which diameter measurements 
