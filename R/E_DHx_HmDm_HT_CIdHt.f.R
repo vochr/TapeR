@@ -13,11 +13,12 @@
 #' measured without error.
 #' @param par.lme List of taper model parameters obtained by 
 #' \code{\link{TapeR_FIT_LME.f}}.
+#' @param R0 indicator whether taper curve should interpolate measurements
 #' @param ... not currently used
 #' @details calibrates the tree specific taper curve and calculates 'exact'
 #' confidence intervals, which can be useful for plotting. 
 #' Attention: this function is somewhat time-consuming.
-#' @return a list holding six elements:
+#' @return a matrix with six columns:
 #' \itemize{
 #'  \item{Hx: }{Numeric vector of heights (m) along which to return the expected 
 #'  diameter.} 
@@ -67,6 +68,7 @@
 #' points(tree1$Hx[3], tree1$Dx[3], pch=3, col=2)
 #' #add the observations
 #' points(tree1$Hx, tree1$Dx)
+#' 
 #' ## Calculate "exact" CIs. Careful: This takes a while!
 #' #library(pracma)# for numerical integration with gaussLegendre()
 #' tc.tree1.exact <- E_DHx_HmDm_HT_CIdHt.f(Hx=1:tree1$Ht[1],
@@ -81,13 +83,7 @@
 #' lines(tc.tree1.exact[,1], tc.tree1.exact[,4], lty=2,col=2)
 
 E_DHx_HmDm_HT_CIdHt.f <-
-function(Hx, Hm, Dm, mHt, sHt, par.lme, ...){
-#   ************************************************************************************************
-
-#	mHt = mw_HtT; sHt = sd_HtT; par.lme = SK.par.lme
-
-
-	#	Hx 			= seq(0,mw_HtT + 0*sd_HtT,length.out=NHx) #     Hx fuer untere Grenze (SK_m: mH)
+function(Hx, Hm, Dm, mHt, sHt, par.lme, R0=FALSE, ...){
 
 		if(sHt > 0){
 
@@ -107,7 +103,7 @@ function(Hx, Hm, Dm, mHt, sHt, par.lme, ...){
 
 			for (i in 1: NHx){
 
-				SK		= E_DHx_HmDm_HT.f(Hx = Hx[i], Hm, Dm, mHt, sHt = 0, par.lme)
+				SK		= E_DHx_HmDm_HT.f(Hx = Hx[i], Hm, Dm, mHt, sHt = 0, par.lme, R0)
 				m_DHx 	= SK$DHx; s_DHx	= sqrt(as.numeric(SK$MSE_Mean))
 
 				qD_o[i] = m_DHx
@@ -118,9 +114,9 @@ function(Hx, Hm, Dm, mHt, sHt, par.lme, ...){
 				qD_u[i] = 0				#	min(qD_1,qD_2)
 
 			#   ------------------------------------------------------------------------------------------------
-				pD_u[i] = Int_CdN_DHx_dHt.f(qD = qD_u[i], Hx = Hx[i], Hm, Dm, mHt, sHt, par.lme, nGL = 51)
+				pD_u[i] = Int_CdN_DHx_dHt.f(qD = qD_u[i], Hx = Hx[i], Hm, Dm, mHt, sHt, par.lme, R0, nGL = 51)
 			#   ------------------------------------------------------------------------------------------------
-				pD_o[i]	= Int_CdN_DHx_dHt.f(qD = qD_o[i], Hx = Hx[i], Hm, Dm, mHt, sHt, par.lme, nGL = 51)
+				pD_o[i]	= Int_CdN_DHx_dHt.f(qD = qD_o[i], Hx = Hx[i], Hm, Dm, mHt, sHt, par.lme, R0, nGL = 51)
 			#   ------------------------------------------------------------------------------------------------
 
 				alpha = 0.025
@@ -130,7 +126,7 @@ function(Hx, Hm, Dm, mHt, sHt, par.lme, ...){
 									qDHx = uniroot(qD.rout.f, c(qD_u[i],qD_o[i]),
 														  				tol = 0.001, alpha,
 																  		Hx = Hx[i], Hm, Dm, mHt, sHt,
-																		par.lme = par.lme, nGL = 51)$root
+																		par.lme = par.lme, R0=R0, nGL = 51)$root
 				}}
 
 		#		Int_CdN_DHx_dHt.f(qDHx = qD_o[i], Hx = Hx[i], Hm, Dm, mw_HtT, sd_HtT, par.lme = SK.par.lme, nGL = 51)     = Int_CdN_DHx_dHt_u
@@ -140,8 +136,10 @@ function(Hx, Hm, Dm, mHt, sHt, par.lme, ...){
 				CIu_DHx[i,2] = qDHx
 				CIu_DHx[i,3] = Hx[i]
 
-				cP_CIu_DHx[i,1] = Int_CdN_DHx_dHt.f(qD = CIu_DHx[i,1], Hx = Hx[i], Hm, Dm, mHt, sHt, par.lme, nGL = 51)
-				cP_CIu_DHx[i,2] = Int_CdN_DHx_dHt.f(qD = CIu_DHx[i,2], Hx = Hx[i], Hm, Dm, mHt, sHt, par.lme, nGL = 51)
+				cP_CIu_DHx[i,1] = Int_CdN_DHx_dHt.f(qD = CIu_DHx[i,1], Hx = Hx[i], Hm, Dm, 
+				                                    mHt, sHt, par.lme, R0, nGL = 51)
+				cP_CIu_DHx[i,2] = Int_CdN_DHx_dHt.f(qD = CIu_DHx[i,2], Hx = Hx[i], Hm, Dm, 
+				                                    mHt, sHt, par.lme, R0, nGL = 51)
 				cP_CIu_DHx[i,3] = Hx[i]
 
 		#		cbind(pD_u[i],pD_o[i],cP_CIu_DHx[i,1])
@@ -172,22 +170,23 @@ function(Hx, Hm, Dm, mHt, sHt, par.lme, ...){
 
 			for (i in 1: NHx){
 
-				SK		= E_DHx_HmDm_HT.f( Hx = Hx[i], Hm, Dm, mHt, sHt = 0, par.lme = par.lme)
-				m_DHx 	= as.numeric(SK$DHx); s_DHx 	= sqrt(as.numeric(SK$MSE_Mean))
+				SK		= E_DHx_HmDm_HT.f( Hx=Hx[i], Hm, Dm, mHt, sHt=0, par.lme=par.lme, R0=R0)
+				m_DHx 	= as.numeric(SK$DHx)
+				s_DHx 	= sqrt(as.numeric(SK$MSE_Mean))
 
 				qD_u[i] = m_DHx
 
 				qD_1 	= m_DHx + 3*s_DHx
-				qD_2 	= E_DHx_HmDm_HT.f( Hx = Hx[i], Hm, Dm, mHt = mHt + 3.0*sHt, sHt = 0, par.lme)$DHx
+				qD_2 	= E_DHx_HmDm_HT.f( Hx=Hx[i], Hm, Dm, mHt=mHt + 3.0*sHt, sHt=0, par.lme, R0=R0)$DHx
 
 				qD_o[i] = max(qD_1,qD_2)
 
 			#   Gauss-Legendre-Integration Int(-inf,+inf){P[D(Hx[i]) <= qD | Ht / Hm, Dm]dHt} :.............
 
 			#   ------------------------------------------------------------------------------------------------
-				pD_u[i] = Int_CdN_DHx_dHt.f(qD = qD_u[i], Hx = Hx[i], Hm, Dm, mHt, sHt, par.lme, nGL = 51)
+				pD_u[i] = Int_CdN_DHx_dHt.f(qD = qD_u[i], Hx = Hx[i], Hm, Dm, mHt, sHt, par.lme, R0, nGL = 51)
 			#   ------------------------------------------------------------------------------------------------
-				pD_o[i]	= Int_CdN_DHx_dHt.f(qD = qD_o[i], Hx = Hx[i], Hm, Dm, mHt, sHt, par.lme, nGL = 51)
+				pD_o[i]	= Int_CdN_DHx_dHt.f(qD = qD_o[i], Hx = Hx[i], Hm, Dm, mHt, sHt, par.lme, R0, nGL = 51)
 			#   ------------------------------------------------------------------------------------------------
 
 				alpha = 0.975
@@ -197,7 +196,7 @@ function(Hx, Hm, Dm, mHt, sHt, par.lme, ...){
 									qDHx = uniroot(qD.rout.f, c(qD_u[i] ,qD_o[i]),
 														  				tol = 0.001, alpha,
 																  		Hx = Hx[i], Hm, Dm, mHt, sHt,
-																		par.lme, nGL = 51)$root
+																		par.lme, R0=R0, nGL = 51)$root
 				}}
 
 		#		Int_CdN_DHx_dHt.f(qDHx = qD_o[i], Hx = Hx[i], Hm, Dm, mw_HtT, sd_HtT, par.lme = SK.par.lme, nGL = 51)     = Int_CdN_DHx_dHt_u
@@ -207,8 +206,10 @@ function(Hx, Hm, Dm, mHt, sHt, par.lme, ...){
 				CIo_DHx[i,2] = qDHx
 				CIo_DHx[i,3] = Hx[i]
 
-				cP_CIo_DHx[i,1] = Int_CdN_DHx_dHt.f(qD = CIo_DHx[i,1], Hx = Hx[i], Hm, Dm, mHt, sHt, par.lme = par.lme, nGL = 51)
-				cP_CIo_DHx[i,2] = Int_CdN_DHx_dHt.f(qD = CIo_DHx[i,2], Hx = Hx[i], Hm, Dm, mHt, sHt, par.lme = par.lme, nGL = 51)
+				cP_CIo_DHx[i,1] = Int_CdN_DHx_dHt.f(qD = CIo_DHx[i,1], Hx = Hx[i], Hm, Dm, 
+				                                    mHt, sHt, par.lme = par.lme, R0=R0, nGL = 51)
+				cP_CIo_DHx[i,2] = Int_CdN_DHx_dHt.f(qD = CIo_DHx[i,2], Hx = Hx[i], Hm, Dm, 
+				                                    mHt, sHt, par.lme = par.lme, R0=R0, nGL = 51)
 				cP_CIo_DHx[i,3] = Hx[i]
 			}
 
@@ -225,7 +226,7 @@ function(Hx, Hm, Dm, mHt, sHt, par.lme, ...){
 			hx = apply(cbind(1,hx),1,min)
 
 		#   ----------------------------------------------------------------------------------------
-			SK_m = SK_EBLUP_LME.f(xm = Hm/mHt, ym = Dm, xp = hx, par.lme) # Kalibrierung/LME
+			SK_m = SK_EBLUP_LME.f(xm = Hm/mHt, ym = Dm, xp = hx, par.lme, R0) # Kalibrierung/LME
 		#   ----------------------------------------------------------------------------------------
 
 			DHx				= 	SK_m$yp
@@ -246,6 +247,7 @@ function(Hx, Hm, Dm, mHt, sHt, par.lme, ...){
 	#	lines(Hx,CIu_DHx[,2],col=c("blue","blue","blue"), lty = c(2,2,2), lwd = c(2,2,2))
 
 		colnames(CI) = c("Hx", "q_DHx_u", "DHx", "q_DHx_o", "cP_DHx_u", "cP_DHx_o")
+		attr(CI, "R0") <- R0
 
 	#   ------------------------------------------------------------------------------------------------
 		return(CI)
