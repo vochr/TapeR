@@ -16,24 +16,21 @@
 #' @param sd_HtT Scalar. Standard deviation of stem height. Can be 0 if height was 
 #' measured without error
 #' @param par.lme List of taper model parameters obtained by \code{\link{TapeR_FIT_LME.f}} 
+#' @param R0 indicator whether taper curve should interpolate measurements
 #' @param IA Logic scalar. If TRUE, variance calculation of height
 #' estimate based on 2-point distribution. If FALSE, variance calculation of height
 #' estimate based on Normal approximation.
 #' @param nGL Numeric scalar. Number of support points for numerical integration.
 #' @param ... not currently used
-#'
+#' @details integrating the taper curve considering uncertainty of height 
+#' measurement
 #' @return list with expected volume, variance of volume and squared expected value
 #' incorporating the uncertainty of height measurement
 #' @author Edgar Kublin
 #' @import pracma
 
 Int_E_VOL_AB_HmDm_HT_dHt.f <-
-function(Hm, Dm, A = NULL, B = NULL, iDH = "D", mw_HtT, sd_HtT, par.lme, IA = F, nGL = 51, ...){
-#   ------------------------------------------------------------------------------------------------
-
-#		Hm; Dm; mHt = mw_HtT; sHt = sd_HtT; A = NULL; B = Int_E_VOL_dHt$Hb; iDH = "H"; par.lme = SK.par.lme; IA = F; nGL = 51
-
-#   	Da = NULL; Db = 7; mw_HtT; sd_HtT; par.lme = SK.par.lme; nGL = 51
+function(Hm, Dm, A=NULL, B=NULL, iDH="D", mw_HtT, sd_HtT, par.lme, R0=FALSE, IA=FALSE, nGL=51, ...){
 
 		if(IA){	# Two Point Approximation Lappi(2006)
 
@@ -46,7 +43,7 @@ function(Hm, Dm, A = NULL, B = NULL, iDH = "D", mw_HtT, sd_HtT, par.lme, IA = F,
 			for (i in 1:ncc){
 
 			#   ------------------------------------------------------------------------------------
-				VOL = E_VOL_AB_HmDm_Ht.f(Hm, Dm, mHt=cc$x[i], A, B, iDH, par.lme)
+				VOL = E_VOL_AB_HmDm_Ht.f(Hm, Dm, mHt=cc$x[i], A, B, iDH, par.lme, R0)
 			#   ------------------------------------------------------------------------------------
 
 				E_VOLab[i] 		= as.numeric(VOL$E_VOL)
@@ -60,7 +57,7 @@ function(Hm, Dm, A = NULL, B = NULL, iDH = "D", mw_HtT, sd_HtT, par.lme, IA = F,
 				Int_VAR_VOLab 	= Int_VAR_VOLab+cc$w[i]*dN_Ht[i]*VAR_VOLab[i]
 			}
 
-		}else{ # Numerische Integration (Gauss - Legendre) ueber die Hoehenverteilung :...............
+		}else{ # Numerische Integration (Gauss - Legendre) ueber die Hoehenverteilung
 
 			ncc = nGL
 
@@ -78,7 +75,7 @@ function(Hm, Dm, A = NULL, B = NULL, iDH = "D", mw_HtT, sd_HtT, par.lme, IA = F,
 		#       Ht[i] = cc$x[i]
 
 			#   ------------------------------------------------------------------------------------
-				VOL = E_VOL_AB_HmDm_Ht.f(Hm, Dm, mHt=cc$x[i], A, B, iDH, par.lme)
+				VOL = E_VOL_AB_HmDm_Ht.f(Hm, Dm, mHt=cc$x[i], A, B, iDH, par.lme, R0)
 			#   ------------------------------------------------------------------------------------
 
 				E_VOLab[i] 		= as.numeric(VOL$E_VOL)
