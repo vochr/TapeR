@@ -1,4 +1,4 @@
-#' @title Estimate volume for stem a section
+#' @title Estimate volume for stem and sections
 #' @description Estimate volume for a complete stem from bottom to tip or 
 #' for a section defined by lower and upper diameter or height. Variances for
 #' estimated volumes are calculated.
@@ -21,6 +21,7 @@
 #' volume estimation. See \code{A} or \code{B}.
 #' @param par.lme List of taper model parameters obtained by 
 #' \code{\link{TapeR_FIT_LME.f}}.
+#' @param R0 indicator whether taper curve should interpolate measurements
 #' @param IA Logic scalar. If TRUE, variance calculation of height estimate 
 #' based on 2-point distribution. If FALSE, variance calculation of height
 #' estimate based on Normal approximation.
@@ -28,7 +29,9 @@
 #' integration.
 #' @param ... not currently used
 #' @details calculates the volume for a complete stem or sections defined by
-#' \code{A} and \code{B}, which might be defined as diameter or height.
+#' \code{A} and \code{B}, which might be defined as diameter or height. The
+#' parameter \code{R0} determines whether the estimated taper curve is forced 
+#' through the measured points (if \code{R0=TRUE}).
 #' @return a list holding nine elements:
 #' \itemize{
 #'  \item{E_VOL: }{Estimated volume (m^3).}
@@ -40,6 +43,7 @@
 #'  \item{Db: }{Diameter at upper section threshold (cm).}
 #'  \item{Ha: }{Height at lower section threshold (m).}
 #'  \item{Hb: }{Height at upper section threshold (m).}
+#'  \item{R0: }{Taper curve forced through measurements (if TRUE) or not (if FALSE).}
 #' }
 #' @author Edgar Kublin
 #' @references Kublin, E., Breidenbach, J., Kaendler, G. (2013) A flexible stem 
@@ -62,10 +66,43 @@
 #' VOL <- E_VOL_AB_HmDm_HT.f(Hm=tree1$Hx[3], 
 #'                           Dm=tree1$Dx[3], 
 #'                           mHt = tree1$Ht[1],
-#'                           sHt = 1, 
+#'                           sHt = 0, # no height variance assumed
 #'                           par.lme = SK.par.lme)
 #' VOL$E_VOL #' expected value
 #' VOL$VAR_VOL #' corresponding variance
+#' VOL$R0
+#' 
+#' ## Calculate the timber volume for the whole stem, using R0=TRUE
+#' VOL <- E_VOL_AB_HmDm_HT.f(Hm=tree1$Hx[3], 
+#'                           Dm=tree1$Dx[3], 
+#'                           mHt = tree1$Ht[1],
+#'                           sHt = 0, # no height variance assumed
+#'                           par.lme = SK.par.lme,
+#'                           R0 = TRUE)
+#' VOL$E_VOL #' expected value
+#' VOL$VAR_VOL #' corresponding variance
+#' VOL$R0
+#' 
+#' ## Calculate the timber volume for the whole stem
+#' VOL <- E_VOL_AB_HmDm_HT.f(Hm=tree1$Hx[3], 
+#'                           Dm=tree1$Dx[3], 
+#'                           mHt = tree1$Ht[1],
+#'                           sHt = 1, # no height variance assumed
+#'                           par.lme = SK.par.lme)
+#' VOL$E_VOL #' expected value
+#' VOL$VAR_VOL #' corresponding variance
+#' VOL$R0
+#' 
+#' ## Calculate the timber volume for the whole stem, using R0=TRUE
+#' VOL <- E_VOL_AB_HmDm_HT.f(Hm=tree1$Hx[3], 
+#'                           Dm=tree1$Dx[3], 
+#'                           mHt = tree1$Ht[1],
+#'                           sHt = 1, #  height variance assumed
+#'                           par.lme = SK.par.lme,
+#'                           R0 = TRUE)
+#' VOL$E_VOL #' expected value
+#' VOL$VAR_VOL #' corresponding variance
+#' VOL$R0
 #' 
 #' ## Calculate the timber volume for a selected section given a height (0.3 - 5 m)
 #' VOL <- E_VOL_AB_HmDm_HT.f(Hm=tree1$Hx[3], 
@@ -78,6 +115,21 @@
 #'                           iDH = "H")
 #' VOL$E_VOL #' expected value
 #' VOL$VAR_VOL #' corresponding variance
+#' VOL$R0
+#' 
+#' ## Calculate the timber volume for a selected section given a height (0.3 - 5 m)
+#' VOL <- E_VOL_AB_HmDm_HT.f(Hm=tree1$Hx[3], 
+#'                           Dm=tree1$Dx[3], 
+#'                           mHt = tree1$Ht[1], 
+#'                           sHt = 1, 
+#'                           par.lme = SK.par.lme, 
+#'                           A=0.3, 
+#'                           B=5, 
+#'                           iDH = "H", 
+#'                           R0=TRUE)
+#' VOL$E_VOL #' expected value
+#' VOL$VAR_VOL #' corresponding variance
+#' VOL$R0
 #' 
 #' ## Calculate the timber volume for a selected section given a diameter
 #' ## threshold (30cm - 15cm) (negative value if A<B)
@@ -123,13 +175,13 @@
 #' 
 
 E_VOL_AB_HmDm_HT.f <-
-function(Hm, Dm, mHt, sHt = 0, A = NULL, B = NULL, iDH = "D", par.lme, IA = F, nGL = 51, ...){
+function(Hm, Dm, mHt, sHt = 0, A = NULL, B = NULL, iDH = "D", par.lme, R0 = FALSE, IA = F, nGL = 51, ...){
 #   ************************************************************************************************
 
 #		Hm; Dm; mHt = mw_HtT; sHt = sd_HtT; a = NULL; b = 7					; iDH = "DH"; par.lme = SK.par.lme; IA = F; nGL = 51
 #		Hm; Dm; mHt = mw_HtT; sHt = sd_HtT; a = NULL; b = Int_E_VOL_dHt$Hb	; iDH = "H"; par.lme = SK.par.lme; IA = F; nGL = 51
 
-#       a - unterer Grenzdurchmesser/ -hoehe (iDH = "H")
+#   a - unterer Grenzdurchmesser/ -hoehe (iDH = "H")
 #		b - oberer Grenzdurchmesser/  -hoehe
 
 		Ht = max(Hm,mHt)
@@ -143,7 +195,7 @@ function(Hm, Dm, mHt, sHt = 0, A = NULL, B = NULL, iDH = "D", par.lme, IA = F, n
 			a=0
 		}else{
 			if(iDH %in% c("d","D")){
-				a = xy0_SK_EBLUP_LME.f(xm, ym, y0 = A, par.lme)
+				a = xy0_SK_EBLUP_LME.f(xm, ym, y0 = A, par.lme, R0)
 			}else{
 				a = min(1,A/Ht)
 			}
@@ -153,33 +205,33 @@ function(Hm, Dm, mHt, sHt = 0, A = NULL, B = NULL, iDH = "D", par.lme, IA = F, n
 			b=1
 		}else{
 			if(iDH %in% c("d","D")){
-				b = xy0_SK_EBLUP_LME.f(xm, ym, y0 = B, par.lme)
+				b = xy0_SK_EBLUP_LME.f(xm, ym, y0 = B, par.lme, R0)
 			}else{
 				b = min(1,B/Ht)
 			}
 		}
 
-		if(sHt > 0){#	Hoehentarifvarianz - Int{VOLab|(Hm,Dm),Ht]dHt} :.............................
+		if(sHt > 0){#	Hoehentarifvarianz - Int{VOLab|(Hm,Dm),Ht]dHt}
 
 			Ht = max(Hm,mHt)
 
-		#   ****************************************************************************************
-			Int_VOLab = Int_E_VOL_AB_HmDm_HT_dHt.f(Hm, Dm, A, B, iDH, mw_HtT = mHt, sd_HtT = sHt, par.lme, IA, nGL)
-		#   ****************************************************************************************
+		#   ************************************************************************
+			Int_VOLab = Int_E_VOL_AB_HmDm_HT_dHt.f(Hm, Dm, A, B, iDH, mw_HtT=mHt, 
+			                                       sd_HtT=sHt, par.lme, R0=R0, IA, nGL)
+		#   ************************************************************************
 
-			E_VOLab = Int_VOLab$E_VOL; VAR_VOLab = Int_VOLab$VAR_VOL
+			E_VOLab = Int_VOLab$E_VOL
+			VAR_VOLab = Int_VOLab$VAR_VOL
 
-			#	SK_VOLab 	= SK_VOLab_EBLUP_LME.f(xm, ym, a, b, Ht, par.lme)
-			#	E_VOLab_m 	= SK_VOLab$VOL; VAR_VOLab_m = SK_VOLab$VAR_VOL ; cbind(E_VOLab_m,VAR_VOLab_m)
-
-		}else{ #    RotationsIntegral ueber die kalibrierte Schaftkurve E[D(Hx)|(Hm,Dm),Ht] :........
+		} else { # RotationsIntegral ueber die kalibrierte Schaftkurve E[D(Hx)|(Hm,Dm),Ht]
 
 
-		#   ****************************************************************************************
-			SK_VOLab = SK_VOLab_EBLUP_LME.f(xm, ym, a, b, Ht, par.lme)
-		#   ****************************************************************************************
+		#   ************************************************************************
+			SK_VOLab = SK_VOLab_EBLUP_LME.f(xm, ym, a, b, Ht, par.lme, R0)
+		#   ************************************************************************
 
-			E_VOLab = SK_VOLab$VOL; VAR_VOLab = SK_VOLab$VAR_VOL ; cbind(E_VOLab,VAR_VOLab)
+			E_VOLab = SK_VOLab$VOL
+			VAR_VOLab = SK_VOLab$VAR_VOL
 
 		}
 
@@ -188,9 +240,9 @@ function(Hm, Dm, mHt, sHt = 0, A = NULL, B = NULL, iDH = "D", par.lme, IA = F, n
 		Ha = a*Ht
 		Hb = b*Ht
 
-		Da = SK_EBLUP_LME.f(xm = Hm/Ht, ym = Dm, xp = a, par.lme)$yp
-		Db = SK_EBLUP_LME.f(xm = Hm/Ht, ym = Dm, xp = b, par.lme)$yp
+		Da = SK_EBLUP_LME.f(xm = Hm/Ht, ym = Dm, xp = a, par.lme, R0)$yp
+		Db = SK_EBLUP_LME.f(xm = Hm/Ht, ym = Dm, xp = b, par.lme, R0)$yp
 
-		return(list(E_VOL = E_VOLab,VAR_VOL = VAR_VOLab, Hm = Hm, Dm = Dm, Ht = Ht, Da = Da, Db = Db, Ha = a*Ht, Hb = b*Ht))
-
+		return(list(E_VOL = E_VOLab, VAR_VOL = VAR_VOLab, Hm = Hm, Dm = Dm, Ht = Ht, 
+		            Da = Da, Db = Db, Ha = a*Ht, Hb = b*Ht, R0=R0))
 	}
