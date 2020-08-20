@@ -11,6 +11,7 @@
 #' @param sHt Scalar. Standard deviation of stem height. Can be 0 if height was 
 #' measured without error
 #' @param par.lme List of taper model parameters obtained by \code{\link{TapeR_FIT_LME.f}}
+#' @param R0 indicator whether taper curve should interpolate measurements
 #' @param nGL Numeric scalar. Number of support points for numerical integration
 #' @param ... 
 #'
@@ -19,7 +20,7 @@
 #' @import pracma
 
 Int_CdN_DHx_dHt.f <-
-function(qD, Hx, Hm, Dm, mHt, sHt, par.lme, nGL = 51, ...){
+function(qD, Hx, Hm, Dm, mHt, sHt, par.lme, R0, nGL = 51, ...){
 #   ------------------------------------------------------------------------------------------------
 	# Hx=Hx[i]
 		ncc = nGL
@@ -37,13 +38,13 @@ function(qD, Hx, Hm, Dm, mHt, sHt, par.lme, nGL = 51, ...){
 
 	#       Ht[i] = cc$x[i]
 
-			SK 	= E_DHx_HmDm_HT.f( Hx, Hm, Dm, mHt = cc$x[i], sHt = 0, par.lme)
+			SK 	= E_DHx_HmDm_HT.f( Hx, Hm, Dm, mHt = cc$x[i], sHt = 0, par.lme, R0)
 
 			Mw_DHxHt[i] 	= as.numeric(SK$DHx)
 			StD_DHxHt[i] 	= sqrt(as.numeric(SK$MSE_Mean))
 
 			dN_Ht[i]  		= dN.f(x = cc$x[i], mw = mHt, sd = sHt)
-			CdN_DHxHt[i] 	= CdN_DHxHt.f(Ht = cc$x[i], Hx, qD, Hm, Dm, par.lme)
+			CdN_DHxHt[i] 	= CdN_DHxHt.f(Ht = cc$x[i], Hx, qD, Hm, Dm, par.lme, R0)
 
 			w_CdN_dN[i]		= cc$w[i]*dN_Ht[i]*CdN_DHxHt[i]
 
