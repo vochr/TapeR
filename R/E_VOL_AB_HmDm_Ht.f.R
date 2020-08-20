@@ -28,8 +28,9 @@
 #' \code{A} and \code{B}, which might be defined as diameter or height. The
 #' parameter \code{R0} determines whether the estimated taper curve is forced 
 #' through the measured points (if \code{R0=TRUE}).
-#' This function is used inside the two-point-approximation of the uncertainty
-#' of volume estimation.
+#' This function is used inside the two-point-approximation and numerical 
+#' integration of the uncertainty. Evaluates the estimated taper curve 
+#' repeatedly for all potential heights according to height uncertainty.
 #' @return a list holding nine elements:
 #' \itemize{
 #'  \item{E_VOL: }{Estimated volume (m^3).}
