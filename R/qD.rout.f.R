@@ -13,6 +13,7 @@
 #' measured without error
 #' @param par.lme List of taper model parameters obtained by 
 #' \code{\link{TapeR_FIT_LME.f}}.
+#' @param R0 indicator whether taper curve should interpolate measurements
 #' @param nGL Numeric scalar. Number of support points for numerical integration.
 #' @param ... not currently used
 #'
@@ -20,8 +21,7 @@
 #' @author Edgar Kublin
 
 qD.rout.f <-
-function(qD, alpha = 0.975, Hx, Hm, Dm, mHt, sHt, par.lme, nGL = 51, ...){
-#   ------------------------------------------------------------------------------------------------
+function(qD, alpha = 0.975, Hx, Hm, Dm, mHt, sHt, par.lme, R0, nGL = 51, ...){
 
-		Int_CdN_DHx_dHt.f(qD, Hx, Hm, Dm, mHt, sHt, par.lme, nGL) - alpha
+		Int_CdN_DHx_dHt.f(qD, Hx, Hm, Dm, mHt, sHt, par.lme, R0, nGL) - alpha
 	}
