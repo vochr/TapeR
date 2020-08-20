@@ -4,7 +4,7 @@
 \alias{E_DHx_HmDm_HT_CIdHt.f}
 \title{Estimate diameter and exact confidence and prediction intervals}
 \usage{
-E_DHx_HmDm_HT_CIdHt.f(Hx, Hm, Dm, mHt, sHt, par.lme, ...)
+E_DHx_HmDm_HT_CIdHt.f(Hx, Hm, Dm, mHt, sHt, par.lme, R0 = FALSE, ...)
 }
 \arguments{
 \item{Hx}{Numeric vector of stem heights (m) along which to return the 
@@ -25,10 +25,12 @@ measured without error.}
 \item{par.lme}{List of taper model parameters obtained by 
 \code{\link{TapeR_FIT_LME.f}}.}
 
+\item{R0}{indicator whether taper curve should interpolate measurements}
+
 \item{...}{not currently used}
 }
 \value{
-a list holding six elements:
+a matrix with six columns:
 \itemize{
  \item{Hx: }{Numeric vector of heights (m) along which to return the expected 
  diameter.} 
@@ -81,6 +83,7 @@ lines(tc.tree1$Hx, tc.tree1$CI_Pred[,3], lty=3)
 points(tree1$Hx[3], tree1$Dx[3], pch=3, col=2)
 #add the observations
 points(tree1$Hx, tree1$Dx)
+
 ## Calculate "exact" CIs. Careful: This takes a while!
 #library(pracma)# for numerical integration with gaussLegendre()
 tc.tree1.exact <- E_DHx_HmDm_HT_CIdHt.f(Hx=1:tree1$Ht[1],

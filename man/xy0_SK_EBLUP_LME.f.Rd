@@ -4,7 +4,7 @@
 \alias{xy0_SK_EBLUP_LME.f}
 \title{find relative height of given diameter}
 \usage{
-xy0_SK_EBLUP_LME.f(xm, ym, y0, par.lme, ...)
+xy0_SK_EBLUP_LME.f(xm, ym, y0, par.lme, R0 = FALSE, ...)
 }
 \arguments{
 \item{xm}{relative heights for which measurements are available}
@@ -14,6 +14,8 @@ xy0_SK_EBLUP_LME.f(xm, ym, y0, par.lme, ...)
 \item{y0}{given diameter for which height is required}
 
 \item{par.lme}{Fitted model object, return of \code{\link{TapeR_FIT_LME.f}}}
+
+\item{R0}{indicator whether taper curve should interpolate measurements}
 
 \item{...}{not currently used}
 }
@@ -25,7 +27,9 @@ Internal function not usually called by users
 }
 \details{
 function used to transform given diameter in volume calculation into
-height; c.f \code{\link{E_VOL_AB_HmDm_HT.f}}
+height; c.f \code{\link{E_VOL_AB_HmDm_HT.f}}; with \code{R0} one can decide 
+whether the measured diameters are forced to lie exactly on the taper curve
+\code{TRUE} or not \code{FALSE}. See also \code{\link{SK_EBLUP_LME.f}}.
 }
 \author{
 Edgar Kublin

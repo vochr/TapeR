@@ -2,7 +2,7 @@
 % Please edit documentation in R/e_vol_ab_hmdm_ht.f_1.R
 \name{E_VOL_AB_HmDm_HT.f}
 \alias{E_VOL_AB_HmDm_HT.f}
-\title{Estimate volume for stem a section}
+\title{Estimate volume for stem and sections}
 \usage{
 E_VOL_AB_HmDm_HT.f(
   Hm,
@@ -13,6 +13,7 @@ E_VOL_AB_HmDm_HT.f(
   B = NULL,
   iDH = "D",
   par.lme,
+  R0 = FALSE,
   IA = F,
   nGL = 51,
   ...
@@ -46,6 +47,8 @@ volume estimation. See \code{A} or \code{B}.}
 \item{par.lme}{List of taper model parameters obtained by 
 \code{\link{TapeR_FIT_LME.f}}.}
 
+\item{R0}{indicator whether taper curve should interpolate measurements}
+
 \item{IA}{Logic scalar. If TRUE, variance calculation of height estimate 
 based on 2-point distribution. If FALSE, variance calculation of height
 estimate based on Normal approximation.}
@@ -67,6 +70,7 @@ a list holding nine elements:
  \item{Db: }{Diameter at upper section threshold (cm).}
  \item{Ha: }{Height at lower section threshold (m).}
  \item{Hb: }{Height at upper section threshold (m).}
+ \item{R0: }{Taper curve forced through measurements (if TRUE) or not (if FALSE).}
 }
 }
 \description{
@@ -76,7 +80,9 @@ estimated volumes are calculated.
 }
 \details{
 calculates the volume for a complete stem or sections defined by
-\code{A} and \code{B}, which might be defined as diameter or height.
+\code{A} and \code{B}, which might be defined as diameter or height. The
+parameter \code{R0} determines whether the estimated taper curve is forced 
+through the measured points (if \code{R0=TRUE}).
 }
 \examples{
 #example data
@@ -92,10 +98,43 @@ Idi <- (DxHx.df[,"Id"] == unique(DxHx.df$Id)[1])
 VOL <- E_VOL_AB_HmDm_HT.f(Hm=tree1$Hx[3], 
                           Dm=tree1$Dx[3], 
                           mHt = tree1$Ht[1],
-                          sHt = 1, 
+                          sHt = 0, # no height variance assumed
                           par.lme = SK.par.lme)
 VOL$E_VOL #' expected value
 VOL$VAR_VOL #' corresponding variance
+VOL$R0
+
+## Calculate the timber volume for the whole stem, using R0=TRUE
+VOL <- E_VOL_AB_HmDm_HT.f(Hm=tree1$Hx[3], 
+                          Dm=tree1$Dx[3], 
+                          mHt = tree1$Ht[1],
+                          sHt = 0, # no height variance assumed
+                          par.lme = SK.par.lme,
+                          R0 = TRUE)
+VOL$E_VOL #' expected value
+VOL$VAR_VOL #' corresponding variance
+VOL$R0
+
+## Calculate the timber volume for the whole stem
+VOL <- E_VOL_AB_HmDm_HT.f(Hm=tree1$Hx[3], 
+                          Dm=tree1$Dx[3], 
+                          mHt = tree1$Ht[1],
+                          sHt = 1, # no height variance assumed
+                          par.lme = SK.par.lme)
+VOL$E_VOL #' expected value
+VOL$VAR_VOL #' corresponding variance
+VOL$R0
+
+## Calculate the timber volume for the whole stem, using R0=TRUE
+VOL <- E_VOL_AB_HmDm_HT.f(Hm=tree1$Hx[3], 
+                          Dm=tree1$Dx[3], 
+                          mHt = tree1$Ht[1],
+                          sHt = 1, #  height variance assumed
+                          par.lme = SK.par.lme,
+                          R0 = TRUE)
+VOL$E_VOL #' expected value
+VOL$VAR_VOL #' corresponding variance
+VOL$R0
 
 ## Calculate the timber volume for a selected section given a height (0.3 - 5 m)
 VOL <- E_VOL_AB_HmDm_HT.f(Hm=tree1$Hx[3], 
@@ -108,6 +147,21 @@ VOL <- E_VOL_AB_HmDm_HT.f(Hm=tree1$Hx[3],
                           iDH = "H")
 VOL$E_VOL #' expected value
 VOL$VAR_VOL #' corresponding variance
+VOL$R0
+
+## Calculate the timber volume for a selected section given a height (0.3 - 5 m)
+VOL <- E_VOL_AB_HmDm_HT.f(Hm=tree1$Hx[3], 
+                          Dm=tree1$Dx[3], 
+                          mHt = tree1$Ht[1], 
+                          sHt = 1, 
+                          par.lme = SK.par.lme, 
+                          A=0.3, 
+                          B=5, 
+                          iDH = "H", 
+                          R0=TRUE)
+VOL$E_VOL #' expected value
+VOL$VAR_VOL #' corresponding variance
+VOL$R0
 
 ## Calculate the timber volume for a selected section given a diameter
 ## threshold (30cm - 15cm) (negative value if A<B)

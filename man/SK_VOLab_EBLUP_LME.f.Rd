@@ -4,7 +4,17 @@
 \alias{SK_VOLab_EBLUP_LME.f}
 \title{taper volume estimation}
 \usage{
-SK_VOLab_EBLUP_LME.f(xm, ym, a = 0, b = 1, Ht, par.lme, IntPolOpt = T, ...)
+SK_VOLab_EBLUP_LME.f(
+  xm,
+  ym,
+  a = 0,
+  b = 1,
+  Ht,
+  par.lme,
+  R0 = FALSE,
+  IntPolOpt = TRUE,
+  ...
+)
 }
 \arguments{
 \item{xm}{relative heights for which measurements are available}
@@ -19,25 +29,27 @@ SK_VOLab_EBLUP_LME.f(xm, ym, a = 0, b = 1, Ht, par.lme, IntPolOpt = T, ...)
 
 \item{par.lme}{List of taper model parameters obtained by \code{\link{TapeR_FIT_LME.f}}}
 
+\item{R0}{indicator whether taper curve should interpolate measurements}
+
 \item{IntPolOpt}{option for method of interpolation, if TRUE using a natural 
 interpolating spline (\code{\link[stats]{splinefun}}), if FALSE using a smoothing 
 spline (\code{\link[stats]{smooth.spline}}); defaults to TRUE}
 
 \item{...}{not currently used}
-
-\item{A}{Numeric scalar defining the lower threshold of a stem section for volume
-estimation. Depends on \code{iDH}. If \code{iDH} = "D", a diameter
-(cm), if \code{iDH} = "H", a height (m). If NULL, section starts at lowest point.}
-
-\item{B}{Numeric scalar defining the upper threshold of a stem section for volume
-estimation. Depends on \code{iDH}. If \code{iDH} = "D", a diameter
-(cm), if \code{iDH} = "H", a height (m). If NULL, section ends at tip.}
 }
 \value{
 List with two elements, the estimated volume and its variance
 }
 \description{
 Internal function not usually called by users
+}
+\details{
+with \code{R0} one can decide whether the measured diameters are 
+forced to lie exactly on the taper curve; this interferes somewhat with the
+\code{IntPolOpt}, which determines the method of taper curve point 
+interpolation for integration. The default TRUE (used throughout all 
+function calls) applies natural interpolating splines, hence this does not
+contradict the optional use of R0=TRUE.
 }
 \author{
 Edgar Kublin

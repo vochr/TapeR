@@ -13,7 +13,8 @@ Int_E_VOL_AB_HmDm_HT_dHt.f(
   mw_HtT,
   sd_HtT,
   par.lme,
-  IA = F,
+  R0 = FALSE,
+  IA = FALSE,
   nGL = 51,
   ...
 )
@@ -43,6 +44,8 @@ measured without error}
 
 \item{par.lme}{List of taper model parameters obtained by \code{\link{TapeR_FIT_LME.f}}}
 
+\item{R0}{indicator whether taper curve should interpolate measurements}
+
 \item{IA}{Logic scalar. If TRUE, variance calculation of height
 estimate based on 2-point distribution. If FALSE, variance calculation of height
 estimate based on Normal approximation.}
@@ -57,6 +60,10 @@ incorporating the uncertainty of height measurement
 }
 \description{
 Internal function not usually called by users
+}
+\details{
+integrating the taper curve considering uncertainty of height 
+measurement
 }
 \author{
 Edgar Kublin

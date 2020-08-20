@@ -4,7 +4,7 @@
 \alias{qD.rout.f}
 \title{qD.rout.f}
 \usage{
-qD.rout.f(qD, alpha = 0.975, Hx, Hm, Dm, mHt, sHt, par.lme, nGL = 51, ...)
+qD.rout.f(qD, alpha = 0.975, Hx, Hm, Dm, mHt, sHt, par.lme, R0, nGL = 51, ...)
 }
 \arguments{
 \item{qD}{vector of quantiles, finally passed to \code{pnorm}}
@@ -27,6 +27,8 @@ measured without error}
 
 \item{par.lme}{List of taper model parameters obtained by 
 \code{\link{TapeR_FIT_LME.f}}.}
+
+\item{R0}{indicator whether taper curve should interpolate measurements}
 
 \item{nGL}{Numeric scalar. Number of support points for numerical integration.}
 

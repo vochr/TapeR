@@ -4,7 +4,7 @@
 \alias{Int_CdN_DHx_dHt.f}
 \title{Int_CdN_DHx_dHt.f}
 \usage{
-Int_CdN_DHx_dHt.f(qD, Hx, Hm, Dm, mHt, sHt, par.lme, nGL = 51, ...)
+Int_CdN_DHx_dHt.f(qD, Hx, Hm, Dm, mHt, sHt, par.lme, R0, nGL = 51, ...)
 }
 \arguments{
 \item{qD}{vector of quantiles, finally passed to \code{pnorm}}
@@ -24,6 +24,8 @@ Can be of length 1. Must be of same length as \code{Hm}}
 measured without error}
 
 \item{par.lme}{List of taper model parameters obtained by \code{\link{TapeR_FIT_LME.f}}}
+
+\item{R0}{indicator whether taper curve should interpolate measurements}
 
 \item{nGL}{Numeric scalar. Number of support points for numerical integration}
 

@@ -4,7 +4,7 @@
 \alias{CdN_DHxHt.f}
 \title{percentile for estimated taper curve diameter}
 \usage{
-CdN_DHxHt.f(Ht, Hx, qD, Hm, Dm, par.lme, ...)
+CdN_DHxHt.f(Ht, Hx, qD, Hm, Dm, par.lme, R0, ...)
 }
 \arguments{
 \item{Ht}{tree height}
@@ -18,6 +18,8 @@ CdN_DHxHt.f(Ht, Hx, qD, Hm, Dm, par.lme, ...)
 \item{Dm}{measured diameter}
 
 \item{par.lme}{List of taper model parameters obtained by \code{\link{TapeR_FIT_LME.f}}.}
+
+\item{R0}{indicator whether taper curve should interpolate measurements}
 
 \item{...}{}
 }

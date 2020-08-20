@@ -4,7 +4,7 @@
 \alias{E_DHx_HmDm_HT.f}
 \title{Estimate diameter and approximate confidence and prediction intervals}
 \usage{
-E_DHx_HmDm_HT.f(Hx, Hm, Dm, mHt, sHt = 0, par.lme, ...)
+E_DHx_HmDm_HT.f(Hx, Hm, Dm, mHt, sHt = 0, par.lme, R0 = FALSE, ...)
 }
 \arguments{
 \item{Hx}{Numeric vector of stem heights (m) along which to return the 
@@ -25,6 +25,8 @@ measured without error.}
 \item{par.lme}{List of taper model parameters obtained by 
 \code{\link{TapeR_FIT_LME.f}}.}
 
+\item{R0}{indicator whether taper curve should interpolate measurements}
+
 \item{...}{not currently used}
 }
 \value{
@@ -42,6 +44,7 @@ a list holding six elements:
  \item{CI_Mean: }{Prediction interval. Matrix of the 95\% conf. int. for the 
  prediction of the diameter (cm). First column: lower limit, second column: 
  mean, third column: upper limit.}
+ \item{R0: }{Taper curve forced through measurements (if TRUE) or not (if FALSE).}
 }
 }
 \description{
@@ -52,6 +55,8 @@ measurement and returns the expected diameters and approximate variances
 calibrates the tree specific taper curve and calculates approximate
 confidence intervals, which can be useful for plotting. Uncertainty resulting
 from tariff height estimates if tree height was not measured is incorporated.
+Using \code{R0} the taper curve can be forced through the measured diameters
+(if \code{R0=TRUE}).
 }
 \examples{
 #example data
@@ -83,6 +88,31 @@ lines(tc.tree1$Hx, tc.tree1$CI_Pred[,1], lty=3)
 lines(tc.tree1$Hx, tc.tree1$CI_Pred[,3], lty=3)
 #add measured diameter used for calibration
 points(tree1$Hx[3], tree1$Dx[3], pch=3, col=2)
+#add the observations
+points(tree1$Hx, tree1$Dx)
+
+## feature of forcing taper curve through measured diameters
+i <- c(3, 5)
+tc.tree1 <- E_DHx_HmDm_HT.f(Hx=1:tree1$Ht[1], 
+                            Hm=tree1$Hx[i],
+                            Dm=tree1$Dx[i], 
+                            mHt = tree1$Ht[1], 
+                            sHt = 0, 
+                            par.lme = SK.par.lme,
+                            R0=FALSE)
+tc.tree2 <- E_DHx_HmDm_HT.f(Hx=1:tree1$Ht[1], 
+                            Hm=tree1$Hx[i],
+                            Dm=tree1$Dx[i], 
+                            mHt = tree1$Ht[1], 
+                            sHt = 0, 
+                            par.lme = SK.par.lme,
+                            R0=TRUE)
+#plot the predicted taper curve
+plot(tc.tree1$Hx, tc.tree1$DHx, type="l", las=1)
+#added taper curve through measurement
+points(x=tc.tree2$Hx, y=tc.tree2$DHx, type="l", lty=2)
+#add measured diameter used for calibration
+points(tree1$Hx[i], tree1$Dx[i], pch=3, col=2)
 #add the observations
 points(tree1$Hx, tree1$Dx)
 }
