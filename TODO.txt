@@ -14,3 +14,6 @@ TapeR - TODO:
   evtl. Option in Meldung erläutern
 * unsaubere Daten für Modellanpassung - vorab testen?
 ** NA abfangen
+* check R0 parameter in calls to
+** SK_EBLUP_LME.f
+** xy0_SK_EBLUP_LME.f
