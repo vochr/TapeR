@@ -1,7 +1,7 @@
 Package: TapeR
 Type: Package
 Title: Flexible Tree Taper Curves Based on Semiparametric Mixed Models
-Version: 0.4.0
+Version: 0.4.1
 Date: 2020-08-18
 Authors@R: c(person(given = "Edgar", family = "Kublin", role = "aut"),
              person(given = "Johannes", family = "Breidenbach", role = c("ctb","cre"),
