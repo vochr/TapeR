@@ -33,9 +33,9 @@
 #' @examples
 #' data("SK.par.lme")
 #' TapeR:::SK_EBLUP_LME.f(1.3/27, 30, 1.3/27, SK.par.lme)
-#' ## using empirical best linear unbiased estimator, estimate != 30
+#' ## using empirical best linear unbiased estimator: estimate != 30
 #' TapeR:::SK_EBLUP_LME.f(1.3/27, 30, 1.3/27, SK.par.lme, R0=FALSE)$yp
-#' ## interpolate / force through given diameter, estimate  == 30
+#' ## interpolate / force through given diameter: estimate  == 30
 #' TapeR:::SK_EBLUP_LME.f(1.3/27, 30, 1.3/27, SK.par.lme, R0=TRUE)$yp
 #' TapeR:::SK_EBLUP_LME.f(1.3/27, 30, c(1.3, 5)/27, SK.par.lme)
 #' @export
@@ -53,8 +53,8 @@ function(xm, ym, xp, par.lme, R0=FALSE, ...){
 		x_k 	= xm
 		y_k     = ym
 
-		X_k = XZ_BSPLINE.f(x_k, par.lme)$X
-		Z_k = XZ_BSPLINE.f(x_k, par.lme)$Z
+		X_k = XZ_BSPLINE.f(x_k, par.lme$knt_x, par.lme$ord_x)
+		Z_k = XZ_BSPLINE.f(x_k, par.lme$knt_z, par.lme$ord_z)
 
 	#   Feste Effekte - Mittlere Schaftkurve in der GesamtPopulation (PA) : E[y|x] = X*b_fix:.......
 
@@ -98,8 +98,8 @@ function(xm, ym, xp, par.lme, R0=FALSE, ...){
 	#	x_pre 	= xp[order(xp)]
 		x_pre 	= xp
 
-		X_kh = XZ_BSPLINE.f(x_pre, par.lme)$X
-		Z_kh = XZ_BSPLINE.f(x_pre, par.lme)$Z
+		X_kh = XZ_BSPLINE.f(x_pre, par.lme$knt_x, par.lme$ord_x)
+		Z_kh = XZ_BSPLINE.f(x_pre, par.lme$knt_z, par.lme$ord_z)
 
 	#   ********************************************************************************************
 		yp = EBLUP_y_kh  = X_kh%*%b_fix + Z_kh%*%EBLUP_b_k    		#	V&C(1997) (6.2.52)
