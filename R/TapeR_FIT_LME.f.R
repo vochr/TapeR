@@ -15,6 +15,9 @@
 #' @param IdKOVb Character string. Type of covariance matrix used by 
 #' \code{lme}. Only "pdSymm" makes sense. Rather reduce number of knots if
 #' function does not converge.
+#' @param control a list of control values for the estimation algorithm to 
+#' replace the default values returned by the function 
+#' \code{\link[nlme]{lmeControl}}. Defaults to an empty list.
 #' @param ... not currently used
 #' @details If too few trees are given, the linear mixed model (lme) will not 
 #' converge. See examples for a suggestion of node positions.
@@ -83,55 +86,56 @@
 
  
 TapeR_FIT_LME.f <-
-function(Id,x,y,knt_x,ord_x,knt_z,ord_z,IdKOVb = "pdSymm", ...){
-#   ************************************************************************************************
+function(Id, x, y, knt_x, ord_x, knt_z, ord_z, IdKOVb = "pdSymm", control = list(), ...){
+  ## control values, taken from nlme:::lme.formula()
+  controlvals <- lmeControl()
+  if (!missing(control)) {
+    controlvals[names(control)] <- control
+  }
+	## require(nlme)
+  BS_x <- BSplines(knots = knt_x, ord = ord_x, der = 0, x = x)
+  BS_z <- BSplines(knots = knt_z, ord = ord_z, der = 0, x = x)
+  
+  # last column is omitted in order to ensure Ey(x=1)=0
+  X <- BS_x[1:nrow(BS_x),1:ncol(BS_x)-1,drop=F] 
+  Z <- BS_z[1:nrow(BS_z),1:ncol(BS_z)-1,drop=F]
 
-		## require(nlme)
+#   ****************************************************************************
+#		fitting LME Modell E[y|X,Z] = X*b_fix + Z*b_rnd + eps
+#   ****************************************************************************
 
-	    BS_x  	= BSplines(knots = knt_x, ord = ord_x, der = 0, x = x)   ;# fix(BS.x)
-	   	BS_z  	= BSplines(knots = knt_z, ord = ord_z, der = 0, x = x)   ;# fix(BS.x)
+  if(IdKOVb == "pdDiag"){ # VAR[b_rnd] from empiric KOV[b_rnd]
+  	fit.lme <- lme(y ~ X-1,	random = list(Id = pdDiag(~Z-1)), 
+  	               control = controlvals)
+  } else {
+  	fit.lme <- lme(y ~ X-1,	random = list(Id = pdSymm(~Z-1)),
+  	               control = controlvals, method = "ML" )
+  }
+#   ****************************************************************************
 
-		X		= BS_x[1:nrow(BS_x),1:ncol(BS_x)-1,drop=F]     ;	# last column is omitted in order to ensure Ey(x=1)=0
-	    Z 		= BS_z[1:nrow(BS_z),1:ncol(BS_z)-1,drop=F]     ;
+	b_fix <- as.numeric(fixef(fit.lme))
+	KOVb_fix <- vcov(fit.lme)
 
-#   ************************************************************************************************
-#							LME Modell E[y|X,Z] = X*b_fix + Z*b_rnd + eps
-#   ************************************************************************************************
-
-		if(IdKOVb == "pdDiag"){
-			fit.lme = lme(y ~ X-1,	random = list(Id = pdDiag(~Z-1)))    #   VAR[b_rnd] from emp KOV[b_rnd]
-		}else{
-			fit.lme = lme(y ~ X-1,	random = list(Id = pdSymm(~Z-1)),
-									control= lmeControl(msMaxIter=500,msMaxEval=500),
-									method = "ML" )
-		}
-#   ************************************************************************************************
-
-		b_fix 		= as.numeric(fixef(fit.lme))
-		KOVb_fix    = vcov(fit.lme)
-
-		if(IdKOVb == "pdDiag"){												   # empirische KOVb_rnd
-			VARb_rnd = matrix(getVarCov(fit.lme),ncol=ncol(getVarCov(fit.lme)))
-			KORb_rnd = cor(ranef(fit.lme))
-			KOVb_rnd = sqrt(VARb_rnd)%*%KORb_rnd%*%sqrt(VARb_rnd)
-		}else{
-			KOVb_rnd = matrix(getVarCov(fit.lme),ncol=ncol(getVarCov(fit.lme)))
-			KORb_rnd = cov2cor(KOVb_rnd)
-		}
-
-		theta 		= attr(fit.lme$apVar,"Pars")
-		KOV_theta 	= matrix(fit.lme$apVar,ncol=length(theta),byrow=T)
-
-		sig2_eps 	= as.numeric(exp(theta["lSigma"])^2)
-
-		par.lme     = list(	knt_x = knt_x, pad_knt_x = TransKnots(knots=knt_x, ord=ord_x),
-		                    knt_z = knt_z, pad_knt_z = TransKnots(knots=knt_z, ord=ord_z), 
-		                    ord_x = ord_x, ord_z = ord_z,
-		                    b_fix = b_fix, KOVb_fix = KOVb_fix,
-		                    sig2_eps = sig2_eps, dfRes = anova(fit.lme)$denDF,
-		                    KOVb_rnd = KOVb_rnd, theta = theta, KOV_theta = KOV_theta)
-
-#       --------------------------------------------------------------------------------------------
-		return(list(fit.lme = fit.lme,par.lme = par.lme))
-#       --------------------------------------------------------------------------------------------
+	if(IdKOVb == "pdDiag"){ # empirische KOVb_rnd
+		VARb_rnd <- matrix(getVarCov(fit.lme), ncol=ncol(getVarCov(fit.lme)))
+		KORb_rnd <- cor(ranef(fit.lme))
+		KOVb_rnd <- sqrt(VARb_rnd)%*%KORb_rnd%*%sqrt(VARb_rnd)
+	} else {
+		KOVb_rnd <- matrix(getVarCov(fit.lme), ncol=ncol(getVarCov(fit.lme)))
+		KORb_rnd <- cov2cor(KOVb_rnd)
 	}
+
+	theta <- attr(fit.lme$apVar, "Pars")
+	KOV_theta <- matrix(fit.lme$apVar, ncol=length(theta), byrow=T)
+
+	sig2_eps <- as.numeric(exp(theta["lSigma"])^2)
+
+	par.lme <- list(knt_x = knt_x, pad_knt_x = TransKnots(knots=knt_x, ord=ord_x),
+	                knt_z = knt_z, pad_knt_z = TransKnots(knots=knt_z, ord=ord_z), 
+	                ord_x = ord_x, ord_z = ord_z,
+	                b_fix = b_fix, KOVb_fix = KOVb_fix,
+	                sig2_eps = sig2_eps, dfRes = anova(fit.lme)$denDF,
+	                KOVb_rnd = KOVb_rnd, theta = theta, KOV_theta = KOV_theta)
+
+	return(list(fit.lme = fit.lme,par.lme = par.lme))
+}
