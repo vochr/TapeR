@@ -11,7 +11,7 @@
 XZ_BSPLINE.f <- function(x, knt, ord, ...){
     
     BS <- BSplines(knots = knt, ord = ord, der = 0, x = x)
-    BS <- BS[1:nrow(BS), 1:ncol(BS)-1, drop=F]
+    BS <- BS[, -ncol(BS), drop=F]
     
     return(BS)
   }

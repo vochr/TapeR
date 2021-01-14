@@ -240,7 +240,9 @@ function( Hx, Hm, Dm, mHt, sHt = 0, par.lme, R0=FALSE, ...){
 			ym = Dm
 
 			hx = Hx[order(Hx)]/mHt
-			hx = apply(cbind(1,hx),1,min)
+			# hx = apply(cbind(1,hx),1,min)
+			hx = hx[hx <= 1]
+			# hx = ifelse(hx > 1, 1, hx)
 
 		#   ----------------------------------------------------------------------------------------
 			SK_m = SK_EBLUP_LME.f(xm = Hm/mHt, ym = Dm, xp = hx, par.lme, R0) # Kalibrierung/LME

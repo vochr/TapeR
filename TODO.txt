@@ -16,4 +16,8 @@ TapeR - TODO:
 ** NA abfangen
 * check R0 parameter in calls to
 ** SK_EBLUP_LME.f
-** xy0_SK_EBLUP_LME.f
+** xy0_SK_EBLUP_LME.f <-- E_VOL_AB_HmDm_HT.f
+** SK_VOLab_EBLUP_LME.f <-- E_VOL_AB_HmDm_HT.f
+* nach eigentlich fit mit LME passiert es (data=bdat, BA=8), dass ein Fehler
+	auftritt: Fehler in chol.default((value + t(value))/2) : 
+	der führende Minor der Ordnung 4 ist nicht positiv definit
